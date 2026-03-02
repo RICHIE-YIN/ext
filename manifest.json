@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Resell Scout",
+  "version": "1.0.0",
+  "description": "Identify good deals on Facebook Marketplace based on your custom reselling price sheet.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.facebook.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/marketplace*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Resell Scout"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
