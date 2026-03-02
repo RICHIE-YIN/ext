@@ -85,6 +85,35 @@
     </form>
   </section>
 
+  <!-- Import / Export -->
+  <section class="section import-section">
+    <button class="collapsible" id="importToggle">
+      <span>Import / Export JSON</span>
+      <span class="chevron">▸</span>
+    </button>
+    <div class="collapsible-body" id="importBody" hidden>
+      <p class="import-hint">
+        Paste a JSON array below to bulk-load items, or copy your current sheet to share / back up.
+        See <code>items-template.json</code> in the extension folder for the exact format.
+      </p>
+      <textarea id="jsonTextarea" spellcheck="false" placeholder='[
+  {
+    "name": "PS5",
+    "keywords": "ps5, playstation 5",
+    "minBuyPrice": 0,
+    "maxBuyPrice": 350,
+    "resellPrice": 500
+  }
+]'></textarea>
+      <div id="importFeedback" class="import-feedback" hidden></div>
+      <div class="import-actions">
+        <button class="btn-secondary" id="exportBtn">Copy current sheet</button>
+        <button class="btn-secondary" id="importMergeBtn">Import &amp; merge</button>
+        <button class="btn-primary"  id="importReplaceBtn">Import &amp; replace</button>
+      </div>
+    </div>
+  </section>
+
   <script src="popup.js"></script>
 </body>
 </html>

@@ -1,0 +1,23 @@
+[
+  {
+    "name": "PS5 Console",
+    "keywords": "ps5, playstation 5, playstation5",
+    "minBuyPrice": 0,
+    "maxBuyPrice": 350,
+    "resellPrice": 500
+  },
+  {
+    "name": "Nintendo Switch OLED",
+    "keywords": "switch oled, nintendo switch oled",
+    "minBuyPrice": 0,
+    "maxBuyPrice": 200,
+    "resellPrice": 300
+  },
+  {
+    "name": "Air Jordan 1 Retro High",
+    "keywords": "jordan 1, air jordan 1, aj1",
+    "minBuyPrice": 0,
+    "maxBuyPrice": 120,
+    "resellPrice": 220
+  }
+]

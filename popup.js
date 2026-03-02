@@ -234,6 +234,85 @@ itemForm.addEventListener('submit', e => {
   clearForm();
 });
 
+// ─── Import / Export ──────────────────────────────────────────────────────────
+
+const importToggle     = document.getElementById('importToggle');
+const importBody       = document.getElementById('importBody');
+const jsonTextarea     = document.getElementById('jsonTextarea');
+const importFeedback   = document.getElementById('importFeedback');
+const exportBtn        = document.getElementById('exportBtn');
+const importMergeBtn   = document.getElementById('importMergeBtn');
+const importReplaceBtn = document.getElementById('importReplaceBtn');
+
+importToggle.addEventListener('click', () => {
+  const open = !importBody.hidden;
+  importBody.hidden = open;
+  importToggle.querySelector('.chevron').textContent = open ? '▸' : '▾';
+});
+
+exportBtn.addEventListener('click', () => {
+  const exported = items.map(({ name, keywords, minBuyPrice, maxBuyPrice, resellPrice }) =>
+    ({ name, keywords, minBuyPrice, maxBuyPrice, resellPrice })
+  );
+  jsonTextarea.value = JSON.stringify(exported, null, 2);
+  navigator.clipboard.writeText(jsonTextarea.value).then(
+    () => showFeedback('Copied to clipboard!', 'ok'),
+    () => showFeedback('JSON shown in box — copy manually.', 'ok')
+  );
+});
+
+importMergeBtn.addEventListener('click', () => doImport(false));
+importReplaceBtn.addEventListener('click', () => doImport(true));
+
+function doImport(replace) {
+  let parsed;
+  try {
+    parsed = JSON.parse(jsonTextarea.value.trim());
+  } catch {
+    showFeedback('Invalid JSON — check the format and try again.', 'err');
+    return;
+  }
+
+  if (!Array.isArray(parsed)) {
+    showFeedback('JSON must be an array [ ... ]', 'err');
+    return;
+  }
+
+  const valid = [];
+  for (const raw of parsed) {
+    const name       = String(raw.name       || '').trim();
+    const keywords   = String(raw.keywords   || '').trim();
+    const maxBuyPrice = parseFloat(raw.maxBuyPrice);
+    const resellPrice = parseFloat(raw.resellPrice);
+    const minBuyPrice = parseFloat(raw.minBuyPrice) || 0;
+
+    if (!name || !keywords || isNaN(maxBuyPrice) || isNaN(resellPrice)) continue;
+    valid.push({ id: uid(), name, keywords, minBuyPrice, maxBuyPrice, resellPrice });
+  }
+
+  if (!valid.length) {
+    showFeedback('No valid items found. Each entry needs name, keywords, maxBuyPrice, resellPrice.', 'err');
+    return;
+  }
+
+  if (replace) {
+    items = valid;
+  } else {
+    items = [...items, ...valid];
+  }
+
+  save(render);
+  showFeedback(`${replace ? 'Replaced with' : 'Added'} ${valid.length} item${valid.length !== 1 ? 's' : ''}.`, 'ok');
+  jsonTextarea.value = '';
+}
+
+function showFeedback(msg, type) {
+  importFeedback.textContent = msg;
+  importFeedback.className   = `import-feedback ${type}`;
+  importFeedback.hidden      = false;
+  setTimeout(() => { importFeedback.hidden = true; }, 4000);
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 load(render);
