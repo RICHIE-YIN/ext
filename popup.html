@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resell Scout</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <span class="logo">🔍</span>
+      <div>
+        <h1>Resell Scout</h1>
+        <p class="subtitle">Facebook Marketplace Deal Finder</p>
+      </div>
+    </div>
+    <label class="toggle" title="Enable / disable badge overlay">
+      <input type="checkbox" id="enabledToggle" />
+      <span class="slider"></span>
+    </label>
+  </header>
+
+  <!-- Stats bar -->
+  <div class="stats-bar" id="statsBar">
+    <span id="itemCount">0 items tracked</span>
+    <span class="dot">·</span>
+    <span id="avgProfit">—</span>
+  </div>
+
+  <!-- Item list -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Reselling Sheet</h2>
+      <button class="btn-icon" id="clearAllBtn" title="Remove all items">Clear all</button>
+    </div>
+
+    <div id="emptyState" class="empty-state">
+      <p>No items yet. Add your first item below.</p>
+    </div>
+
+    <ul id="itemList" class="item-list" hidden></ul>
+  </section>
+
+  <!-- Add / Edit form -->
+  <section class="section form-section" id="formSection">
+    <h2 id="formTitle">Add Item</h2>
+    <form id="itemForm" autocomplete="off">
+
+      <label for="fName">Item Name</label>
+      <input id="fName" type="text" placeholder='e.g. "PS5", "Air Jordan 1"' required />
+
+      <label for="fKeywords">
+        Search Keywords
+        <span class="hint">comma-separated — matched against listing titles</span>
+      </label>
+      <input id="fKeywords" type="text" placeholder='e.g. "ps5, playstation 5, playstation5"' required />
+
+      <div class="row">
+        <div class="col">
+          <label for="fMinBuy">Min Buy ($)</label>
+          <input id="fMinBuy" type="number" min="0" step="0.01" placeholder="0" />
+        </div>
+        <div class="col">
+          <label for="fMaxBuy">Max Buy ($) <span class="req">*</span></label>
+          <input id="fMaxBuy" type="number" min="0" step="0.01" placeholder="e.g. 300" required />
+        </div>
+        <div class="col">
+          <label for="fResell">Resell Price ($) <span class="req">*</span></label>
+          <input id="fResell" type="number" min="0" step="0.01" placeholder="e.g. 450" required />
+        </div>
+      </div>
+
+      <div id="profitPreview" class="profit-preview" hidden>
+        <span id="profitText"></span>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" id="cancelBtn" hidden>Cancel</button>
+        <button type="submit" class="btn-primary" id="submitBtn">Add Item</button>
+      </div>
+
+    </form>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>
