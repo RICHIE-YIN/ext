@@ -5,6 +5,6 @@
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
   if (reason === 'install') {
-    chrome.storage.sync.set({ items: [], enabled: true });
+    chrome.storage.local.set({ items: [], enabled: true });
   }
 });

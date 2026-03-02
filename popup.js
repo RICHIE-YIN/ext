@@ -31,14 +31,14 @@ const fResell   = document.getElementById('fResell');
 // ─── Storage helpers ──────────────────────────────────────────────────────────
 
 function save(callback) {
-  chrome.storage.sync.set({ items }, () => {
+  chrome.storage.local.set({ items }, () => {
     notifyContentScript();
     if (callback) callback();
   });
 }
 
 function load(callback) {
-  chrome.storage.sync.get({ items: [], enabled: true }, data => {
+  chrome.storage.local.get({ items: [], enabled: true }, data => {
     items = data.items;
     enabledToggle.checked = data.enabled;
     callback();
@@ -175,7 +175,7 @@ function escHtml(str) {
 // ─── Event listeners ──────────────────────────────────────────────────────────
 
 enabledToggle.addEventListener('change', () => {
-  chrome.storage.sync.set({ enabled: enabledToggle.checked }, notifyContentScript);
+  chrome.storage.local.set({ enabled: enabledToggle.checked }, notifyContentScript);
 });
 
 clearAllBtn.addEventListener('click', () => {

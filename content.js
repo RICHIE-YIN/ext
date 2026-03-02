@@ -17,7 +17,7 @@ function parsePrice(text) {
 
 function loadItems() {
   return new Promise(resolve =>
-    chrome.storage.sync.get({ items: [], enabled: true }, d =>
+    chrome.storage.local.get({ items: [], enabled: true }, d =>
       resolve({ items: d.items, enabled: d.enabled })
     )
   );
