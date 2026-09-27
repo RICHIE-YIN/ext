@@ -17,35 +17,43 @@ function parsePrice(text) {
 
 function loadItems() {
   return new Promise(resolve =>
-    chrome.storage.sync.get({ items: [], enabled: true }, d =>
+    chrome.storage.local.get({ items: [], enabled: true }, d =>
       resolve({ items: d.items, enabled: d.enabled })
     )
   );
 }
 
 /**
- * Returns the first item whose keywords match the listing title, or null.
+ * Returns the item with the longest keyword found in the listing title, or null.
+ * Longest wins so "ps5 pro" beats "ps5" when both items are in the sheet.
  */
 function matchItem(title, items) {
   const lower = title.toLowerCase();
+  let best = null;
+  let bestLen = 0;
+  const split = s => (s || '').toLowerCase().split(',').map(k => k.trim()).filter(Boolean);
   for (const item of items) {
-    const kws = item.keywords
-      .toLowerCase()
-      .split(',')
-      .map(k => k.trim())
-      .filter(Boolean);
-    if (kws.some(kw => lower.includes(kw))) return item;
+    if (split(item.excludeKeywords).some(ex => lower.includes(ex))) continue;
+    for (const kw of split(item.keywords)) {
+      if (kw.length > bestLen && lower.includes(kw)) {
+        best = item;
+        bestLen = kw.length;
+      }
+    }
   }
-  return null;
+  return best;
+}
+
+function money(n) {
+  return `$${Math.round(n).toLocaleString()}`;
 }
 
 // ─── Badge creation ──────────────────────────────────────────────────────────
 
-function makeBadge(item, price) {
+function makeBadge(item, price, title) {
   const good       = price <= item.maxBuyPrice;
   const profit     = item.resellPrice - price;
   const profitPct  = Math.round((profit / price) * 100);
-  const overPct    = Math.round(((price - item.maxBuyPrice) / item.maxBuyPrice) * 100);
 
   const badge = document.createElement('div');
   badge.className = BADGE_CLASS;
@@ -54,14 +62,78 @@ function makeBadge(item, price) {
   if (good) {
     const label = profitPct > 0 ? `+${profitPct}% profit` : 'Deal';
     badge.innerHTML = `<span class="rs-icon">✓</span><span>${label}</span>`;
-    badge.title = `Buy for $${price} → Sell for $${item.resellPrice} (profit $${profit.toFixed(2)})`;
   } else {
-    badge.innerHTML = `<span class="rs-icon">✗</span><span>$${(price - item.maxBuyPrice).toFixed(0)} over max</span>`;
-    badge.title = `Max buy price is $${item.maxBuyPrice}. Listed at $${price} (+${overPct}%)`;
+    badge.innerHTML = `<span class="rs-icon">✗</span><span>${money(price - item.maxBuyPrice)} over max</span>`;
   }
+
+  badge.addEventListener('mouseenter', () => showTooltip(badge, item, price, title));
+  badge.addEventListener('mouseleave', hideTooltip);
 
   return badge;
 }
+
+// ─── Hover tooltip ───────────────────────────────────────────────────────────
+// A single fixed-position tooltip on <body>, so card overflow can't clip it.
+
+let tooltip = null;
+
+function showTooltip(badge, item, price, title) {
+  hideTooltip();
+
+  const profit = item.resellPrice - price;
+  const hasRange = item.lowPrice && item.highPrice;
+
+  tooltip = document.createElement('div');
+  tooltip.className = 'rs-tooltip';
+
+  const rows = [
+    ['Listed at', money(price)],
+    ['Resell avg', money(item.resellPrice)],
+    ...(hasRange ? [['Resell range', `${money(item.lowPrice)} – ${money(item.highPrice)}`]] : []),
+    ['Max buy', money(item.maxBuyPrice)],
+    ['Est. profit', `${profit >= 0 ? '+' : '−'}${money(Math.abs(profit))}`],
+    ...(item.confidence ? [['Price data', `${item.confidence} confidence`]] : []),
+  ];
+
+  const name = document.createElement('div');
+  name.className = 'rs-tip-name';
+  name.textContent = item.name;
+
+  const listing = document.createElement('div');
+  listing.className = 'rs-tip-listing';
+  listing.textContent = title.split('\n')[0];
+
+  const table = document.createElement('div');
+  table.className = 'rs-tip-rows';
+  for (const [label, value] of rows) {
+    const l = document.createElement('span');
+    l.textContent = label;
+    const v = document.createElement('strong');
+    v.textContent = value;
+    if (label === 'Est. profit') v.className = profit >= 0 ? 'rs-pos' : 'rs-neg';
+    table.append(l, v);
+  }
+
+  tooltip.append(name, listing, table);
+  document.body.appendChild(tooltip);
+
+  // Position below the badge, clamped to the viewport
+  const r = badge.getBoundingClientRect();
+  const t = tooltip.getBoundingClientRect();
+  const left = Math.min(r.left, window.innerWidth - t.width - 8);
+  const top  = r.bottom + t.height + 6 > window.innerHeight
+    ? r.top - t.height - 6
+    : r.bottom + 6;
+  tooltip.style.left = `${Math.max(8, left)}px`;
+  tooltip.style.top  = `${Math.max(8, top)}px`;
+}
+
+function hideTooltip() {
+  if (tooltip) tooltip.remove();
+  tooltip = null;
+}
+
+window.addEventListener('scroll', hideTooltip, { passive: true });
 
 // ─── Core processing ─────────────────────────────────────────────────────────
 
@@ -113,7 +185,7 @@ async function processListings() {
     // Remove stale badge if item re-rendered
     card.querySelectorAll(`.${BADGE_CLASS}`).forEach(b => b.remove());
 
-    card.appendChild(makeBadge(matched, price));
+    card.appendChild(makeBadge(matched, price, title));
   }
 }
 
@@ -134,6 +206,7 @@ function findCard(link) {
 // ─── Reset + reprocess ───────────────────────────────────────────────────────
 
 function resetAndProcess() {
+  hideTooltip();
   document.querySelectorAll(`[${PROCESSED_ATTR}]`).forEach(el =>
     el.removeAttribute(PROCESSED_ATTR)
   );

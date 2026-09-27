@@ -1,10 +1,12 @@
 /**
  * Resell Scout — background service worker
- * Initialises default storage values on first install.
+ * Seeds the reselling sheet with the built-in price catalog on first install.
  */
 
-chrome.runtime.onInstalled.addListener(({ reason }) => {
-  if (reason === 'install') {
-    chrome.storage.sync.set({ items: [], enabled: true });
-  }
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
+  if (reason !== 'install') return;
+
+  const catalog = await fetch(chrome.runtime.getURL('items-catalog.json')).then(r => r.json());
+  const items = catalog.map((it, i) => ({ id: `cat${i}`, ...it }));
+  chrome.storage.local.set({ items, enabled: true });
 });

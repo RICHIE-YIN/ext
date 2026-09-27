@@ -1,0 +1,38 @@
+[
+  {
+    "name": "PlayStation 5 Slim Disc Edition",
+    "keywords": "ps5 slim disc, ps5 slim standard, playstation 5 slim disc, playstation 5 slim standard, ps5 slim blu, ps5 console, playstation 5 console, ps5 disc, ps5 standard",
+    "excludeKeywords": "for parts, broken, not working, box only, case only, controller only, digital",
+    "minBuyPrice": 0,
+    "maxBuyPrice": 245,
+    "lowPrice": 320,
+    "resellPrice": 380,
+    "highPrice": 440,
+    "confidence": "medium",
+    "pricedAt": "2026-09"
+  },
+  {
+    "name": "PlayStation 5 Slim Digital Edition",
+    "keywords": "ps5 slim digital, playstation 5 slim digital",
+    "excludeKeywords": "for parts, broken, not working, box only, case only, controller only, disc drive only",
+    "minBuyPrice": 0,
+    "maxBuyPrice": 210,
+    "lowPrice": 270,
+    "resellPrice": 320,
+    "highPrice": 370,
+    "confidence": "medium",
+    "pricedAt": "2026-09"
+  },
+  {
+    "name": "PlayStation 5 Pro",
+    "keywords": "ps5 pro, playstation 5 pro",
+    "excludeKeywords": "for parts, broken, not working, box only, case only, controller only",
+    "minBuyPrice": 0,
+    "maxBuyPrice": 390,
+    "lowPrice": 520,
+    "resellPrice": 600,
+    "highPrice": 680,
+    "confidence": "medium",
+    "pricedAt": "2026-09"
+  }
+]
