@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Market Logger</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="logo">📋</span>
+      <div>
+        <h1>Market Logger</h1>
+        <p class="subtitle">Facebook Marketplace price tracker</p>
+      </div>
+    </div>
+    <label class="toggle" title="Pause / resume logging">
+      <input type="checkbox" id="loggingToggle" checked />
+      <span class="slider"></span>
+    </label>
+  </header>
+
+  <div class="stats-bar">
+    <span id="totalCount">0 listings logged</span>
+    <span class="dot">·</span>
+    <span id="storageUsed">—</span>
+  </div>
+
+  <div class="toolbar">
+    <input type="search" id="searchBox" placeholder="Search titles…" />
+    <button class="btn-export" id="exportBtn" title="Download as CSV">Export CSV</button>
+    <button class="btn-danger" id="clearBtn"  title="Wipe all logged data">Clear</button>
+  </div>
+
+  <div id="emptyState" class="empty-state">
+    <p>No listings logged yet.</p>
+    <p class="hint">Browse Facebook Marketplace and they'll appear here automatically.</p>
+  </div>
+
+  <div id="tableWrap" hidden>
+    <table id="logTable">
+      <thead>
+        <tr>
+          <th class="col-title"  data-sort="title">Title <span class="sort-arrow"></span></th>
+          <th class="col-price"  data-sort="price">Price <span class="sort-arrow"></span></th>
+          <th class="col-seen"   data-sort="seenCount">Seen <span class="sort-arrow"></span></th>
+          <th class="col-date"   data-sort="firstSeen">First seen <span class="sort-arrow"></span></th>
+          <th class="col-action"></th>
+        </tr>
+      </thead>
+      <tbody id="logBody"></tbody>
+    </table>
+    <p id="rowCount" class="row-count"></p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

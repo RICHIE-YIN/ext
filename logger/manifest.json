@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Market Logger",
+  "version": "1.0.0",
+  "description": "Silently logs every Facebook Marketplace listing you scroll past — export to CSV any time.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.facebook.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.facebook.com/marketplace*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Market Logger"
+  }
+}
